@@ -14,10 +14,11 @@
         <!-- No progress shown for collapsed series or podcasts in library -->
         <div v-if="!isPodcast && !collapsedSeries" class="absolute bottom-0 left-0 h-1 shadow-sm max-w-full z-10 rounded-b" :class="itemIsFinished ? 'bg-success' : 'bg-yellow-400'" :style="{ width: coverWidth * userProgressPercent + 'px' }"></div>
       </div>
-      <div class="flex-grow pl-2" :class="showPlayButton ? 'pr-12' : 'pr-2'">
+      <div class="flex-grow pl-2 min-w-0 pr-2">
         <p class="whitespace-normal line-clamp-2" :style="{ fontSize: 0.8 * sizeMultiplier + 'rem' }">
           <span v-if="seriesSequence">#{{ seriesSequence }}&nbsp;</span>{{ displayTitle }}
         </p>
+        <p class="truncate text-fg-muted w-full" :style="{ fontSize: 0.7 * sizeMultiplier + 'rem' }">{{ displaySubtitle }}</p>
         <p class="truncate text-fg-muted" :style="{ fontSize: 0.7 * sizeMultiplier + 'rem' }">{{ displayAuthor }}</p>
         <p v-if="displaySortLine" class="truncate text-fg-muted" :style="{ fontSize: 0.7 * sizeMultiplier + 'rem' }">{{ displaySortLine }}</p>
         <p v-if="duration" class="truncate text-fg-muted" :style="{ fontSize: 0.7 * sizeMultiplier + 'rem' }">{{ $elapsedPretty(duration) }}</p>
@@ -29,7 +30,7 @@
           {{ $getString('LabelNumEpisodes', [numEpisodes]) }}
         </p>
       </div>
-      <div v-if="showPlayButton" class="absolute top-0 bottom-0 right-0 h-full flex items-center justify-center z-20 pr-1">
+      <div v-if="showPlayButton" class="absolute top-0 bottom-0 right-0 h-full flex items-center justify-center z-20 pr-1  mt-5">
         <button type="button" class="relative rounded-full bg-fg-muted/50" :class="{ 'p-2': !playerIsStartingForThisMedia }" @click.stop.prevent="play">
           <span v-if="!playerIsStartingForThisMedia" class="material-symbols text-2xl fill text-white">{{ playerIsPlaying ? 'pause' : 'play_arrow' }}</span>
           <div v-else class="p-2 text-fg w-10 h-10 flex items-center justify-center bg-fg-muted/80 rounded-full overflow-hidden">
@@ -202,6 +203,9 @@ export default {
       const ignorePrefix = this.orderBy === 'media.metadata.title' && this.sortingIgnorePrefix
       if (this.collapsedSeries) return ignorePrefix ? this.collapsedSeries.nameIgnorePrefix : this.collapsedSeries.name
       return ignorePrefix ? this.mediaMetadata.titleIgnorePrefix : this.title
+    },
+    displaySubtitle() {
+      return this.mediaMetadata.subtitle
     },
     displayAuthor() {
       if (this.isPodcast) return this.author
